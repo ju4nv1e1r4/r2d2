@@ -1,6 +1,10 @@
 use std::time::SystemTime;
-
+use std::sync::atomic::{AtomicU64, Ordering};
 use crate::client::Messages;
+
+// Contador monotônico global — chave de desempate quando dois nós
+// chegam no mesmo nanosegundo (raro, mas possível).
+static INSERT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
@@ -20,17 +24,19 @@ pub struct MemoryNode {
 
 impl MemoryNode {
     pub fn new(message: Messages, score: Option<f32>) -> Self {
-        let now = SystemTime::now()
+        let nanos = SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .expect("Time went backwards")
-            .as_secs();
+            .as_nanos() as u64;
 
-        MemoryNode { 
-            timestamp: now, 
-            score: score.unwrap_or(0.0), 
-            message: message, 
-            left: None, 
-            right: None
+        let timestamp = nanos ^ INSERT_COUNTER.fetch_add(1, Ordering::Relaxed);
+
+        MemoryNode {
+            timestamp,
+            score: score.unwrap_or(0.0),
+            message,
+            left: None,
+            right: None,
         }
     }
 
@@ -61,7 +67,7 @@ impl ShortTermMemory {
 
     pub fn store(&mut self, message: Messages, score: Option<f32>) {
         if self.current_count >= self.max_nodes {
-            self.clear();
+            self.remove_oldest();
         }
 
         let new_node = Box::new(MemoryNode::new(message, score));
@@ -73,7 +79,7 @@ impl ShortTermMemory {
             Self::insert_recursive(self.root.as_mut().unwrap(), new_node, strategy);
         }
 
-        self.current_count += 1
+        self.current_count += 1;
     }
 
     pub fn insert_recursive(current: &mut Box<MemoryNode>, new_node: Box<MemoryNode>, strategy: MemorySortStrategy) {
@@ -101,7 +107,7 @@ impl ShortTermMemory {
 
         history
     }
-
+    
     fn in_order_traversal(node: &Option<Box<MemoryNode>>, history: &mut Vec<Messages>) {
         if let Some(n) = node {
             Self::in_order_traversal(&n.left, history);
@@ -114,8 +120,28 @@ impl ShortTermMemory {
         }
     }
 
-    pub fn clear(&mut self) {
-        self.root = None;
-        self.current_count = 0;
+    fn remove_oldest(&mut self) {
+        if self.root.is_none() {
+            return;
+        }
+
+        self.root = Self::remove_min(self.root.take());
+        self.current_count -= 1;
     }
+
+    fn remove_min(node: Option<Box<MemoryNode>>) -> Option<Box<MemoryNode>> {
+        match node {
+            None => None,
+            Some(mut n) => {
+                if n.left.is_none() {
+                    // Este é o mínimo: substitui pela subárvore direita.
+                    n.right.take()
+                } else {
+                    n.left = Self::remove_min(n.left.take());
+                    Some(n)
+                }
+            }
+        }
+    }
+
 }
