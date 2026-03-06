@@ -1,5 +1,6 @@
 mod client;
 mod short_term_context;
+mod dynamic_prompt;
 use client::ModelResponse;
 
 #[tokio::main]

@@ -96,6 +96,25 @@ impl ShortTermMemory {
         }
     }
 
+    pub fn get_ordered_history(&self) -> Vec<Messages>{
+        let mut history = Vec::new();
+        Self::in_order_traversal(&self.root, &mut history);
+
+        history
+    }
+
+    fn in_order_traversal(node: &Option<Box<MemoryNode>>, history: &mut Vec<Messages>) {
+        if let Some(n) = node {
+            Self::in_order_traversal(&n.left, history);
+            history.push(Messages {
+                role: n.message.role.clone(),
+                content: n.message.content.clone()
+            });
+
+            Self::in_order_traversal(&n.right, history);
+        }
+    }
+
     pub fn clear(&mut self) {
         self.root = None;
         self.current_count = 0;
