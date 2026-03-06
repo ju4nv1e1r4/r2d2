@@ -1,9 +1,8 @@
-use std::{env::current_exe, time::SystemTime};
-use serde::de::value::BoolDeserializer;
-use tokio::io::unix::AsyncFdTryNewError;
+use std::time::SystemTime;
 
 use crate::client::Messages;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub enum MemorySortStrategy {
     TimeStamp,
@@ -60,7 +59,7 @@ impl ShortTermMemory {
         }
     }
 
-    pub fn score(&mut self, message: Messages, score: Option<f32>) {
+    pub fn store(&mut self, message: Messages, score: Option<f32>) {
         if self.current_count >= self.max_nodes {
             self.clear();
         }

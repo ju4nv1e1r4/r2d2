@@ -1,6 +1,3 @@
-use std::arch::x86_64::_MM_GET_ROUNDING_MODE;
-use std::task;
-
 use crate::short_term_context::ShortTermMemory;
 use crate::client::Messages;
 

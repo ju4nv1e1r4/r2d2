@@ -57,38 +57,23 @@ pub struct Messages {
 }
 
 impl ModelResponse {
-    pub async fn llm(user_input: String) -> Result<client::ModelResponse, Box<dyn StdError + 'static>> {
-        // basics
-        let url_base: String = String::from("http://localhost:11434/api/chat");
-        let client: Client = reqwest::Client::new();
+    pub async fn llm(messages: Vec<Messages>) -> Result<client::ModelResponse, Box<dyn StdError + 'static>> {
+        let url = "http://localhost:11434/api/chat";
+        let client = Client::new();
 
-        // model info
-        let model: String = String::from("codegemma:7b-instruct");
-        
-        // payload
-        let messages: Vec<Messages> = vec![
-            Messages {
-                role: "user".to_string(),
-                content: user_input,
-            },
-        ];
-        //Into<HeaderValue>
-        let stream: bool = false;
-
-        let request = ChatRequest{
-            model: model,
-            messages: messages,
-            stream: stream,
+        let request = ChatRequest {
+            model: "codegemma:7b-instruct".to_string(),
+            messages,
+            stream: false,
         };
-        
-        // results
-        let result = client.post(&url_base)
+
+        let response = client.post(url)
             .json(&request)
             .send()
             .await?
-            .json::<ModelResponse>()
+            .json::<Self>()
             .await?;
 
-        return Ok(result)
+        Ok(response)
     }
 }

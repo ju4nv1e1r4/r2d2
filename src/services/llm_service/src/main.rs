@@ -1,13 +1,9 @@
 mod client;
 mod short_term_context;
 mod dynamic_prompt;
-use client::ModelResponse;
+mod run;
 
 #[tokio::main]
-async fn main() {
-    let user_input = String::from("Vec<String> in rust, whats that?");
-
-    let result = ModelResponse::llm(user_input);
-    let response = result.await.unwrap();
-    println!("{:#?}", response); 
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    run::run().await
 }
