@@ -1,4 +1,5 @@
 mod client;
+mod short_term_context;
 use client::ModelResponse;
 
 #[tokio::main]
