@@ -1,4 +1,4 @@
-use crate::short_term_context::ShortTermMemory;
+use crate::short_term_context_deq::ShortTermMemory;
 use crate::client::Messages;
 
 pub struct DynamicPromptManager {
