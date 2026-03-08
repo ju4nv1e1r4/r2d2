@@ -2,7 +2,7 @@ use std::time::SystemTime;
 use std::sync::atomic::{AtomicU64, Ordering};
 use crate::client::Messages;
 
-// Contador monotônico global — chave de desempate quando dois nós
+// Contador monotônico global: chave de desempate quando dois nós
 // chegam no mesmo nanosegundo (raro, mas possível).
 static INSERT_COUNTER: AtomicU64 = AtomicU64::new(0);
 
