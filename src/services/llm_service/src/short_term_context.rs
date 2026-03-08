@@ -55,6 +55,7 @@ pub struct ShortTermMemory {
     current_count: usize,
 }
 
+#[allow(dead_code)]
 impl ShortTermMemory {
     pub fn new(max_nodes: usize, strategy: Option<MemorySortStrategy>) -> Self {
         ShortTermMemory { 
