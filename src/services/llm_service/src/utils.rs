@@ -13,10 +13,12 @@ pub struct PerformanceMetrics {
     pub tokens_per_second: f64,
 }
 
+#[allow(dead_code)]
 pub struct PerformanceAnalyzer {
     pub reports: Vec<PerformanceMetrics>,
 }
 
+#[allow(dead_code)]
 impl PerformanceAnalyzer {
     pub fn new() -> Self {
         Self { reports: Vec::new() }
@@ -69,6 +71,7 @@ impl PerformanceAnalyzer {
     }
 }
 
+#[allow(dead_code)]
 pub fn measure_execution<T, F: FnOnce() -> T>(f: F) -> (T, Duration) {
     let start = Instant::now();
     let result = f();

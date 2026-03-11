@@ -1,11 +1,13 @@
 use crate::short_term_context_deq::ShortTermMemory;
 use crate::client::Messages;
 
+#[allow(dead_code)]
 pub struct DynamicPromptManager {
     pub system_base: String,
     pub current_task: Option<String>,
 }
 
+#[allow(dead_code)]
 impl DynamicPromptManager {
     pub fn new(role_description: &str) -> Self {
         Self {
