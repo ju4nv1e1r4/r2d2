@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 use reqwest::{self, Client};
-use serde::ser::StdError;
+use std::error::Error as StdError;
 
 use crate::client;
 
 #[allow(dead_code)]
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ModelResponse {
     #[serde(rename = "model")]
     pub model_name: String,
@@ -40,6 +40,7 @@ pub struct ModelResponse {
     pub eval_duration: i64
 }
 
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChatRequest {
     pub model: String,
@@ -47,6 +48,7 @@ pub struct ChatRequest {
     pub stream: bool,
 }
 
+#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Messages {
     #[serde(rename = "role")]
@@ -56,6 +58,7 @@ pub struct Messages {
     pub content: String
 }
 
+#[allow(dead_code)]
 impl ModelResponse {
     pub async fn generate(messages: Vec<Messages>) -> Result<client::ModelResponse, Box<dyn StdError + 'static>> {
         let url = "http://localhost:11434/api/chat";
