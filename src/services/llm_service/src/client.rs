@@ -57,7 +57,7 @@ pub struct Messages {
 }
 
 impl ModelResponse {
-    pub async fn llm(messages: Vec<Messages>) -> Result<client::ModelResponse, Box<dyn StdError + 'static>> {
+    pub async fn generate(messages: Vec<Messages>) -> Result<client::ModelResponse, Box<dyn StdError + 'static>> {
         let url = "http://localhost:11434/api/chat";
         let client = Client::new();
 

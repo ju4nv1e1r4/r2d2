@@ -39,7 +39,7 @@ pub async fn run() -> Result<(), Box<dyn Error>> {
 
         println!("--- Pensando... (Contexto montado em {:.2?}) ---", prompt_duration);
 
-        match ModelResponse::llm(full_prompt).await {
+        match ModelResponse::generate(full_prompt).await {
             Ok(response) => {
                 let assistant_answer = response.message.content.clone();
 
