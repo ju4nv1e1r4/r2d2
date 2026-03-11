@@ -1,3 +1,5 @@
+// Just used in debug mode
+
 use std::error::Error;
 use std::io::{self, Write};
 use crate::client::{Messages, ModelResponse};
@@ -32,7 +34,6 @@ pub async fn run() -> Result<(), Box<dyn Error>> {
             break;
         }
 
-        // Mede o tempo de construção do prompt (síncrono)
         let (full_prompt, prompt_duration) = measure_execution(|| {
             prompt_manager.build_contextual_prompt(user_query, &memory)
         });
@@ -45,7 +46,6 @@ pub async fn run() -> Result<(), Box<dyn Error>> {
 
                 println!("\nIA: {}", assistant_answer);
 
-                // Captura o tamanho da memória antes de adicionar as novas mensagens para o relatório
                 let memory_count_for_report = memory.get_ordered_history().len();
 
                 memory.store(Messages {
@@ -58,7 +58,7 @@ pub async fn run() -> Result<(), Box<dyn Error>> {
                     content: assistant_answer,
                 });
 
-                println!("\n[Memória BST: {} mensagens]", memory.get_ordered_history().len());
+                println!("\n[Memória: {} mensagens]", memory.get_ordered_history().len());
 
                 performance_analyzer.add_report(&response, memory_count_for_report);
                 performance_analyzer.print_last_report();
