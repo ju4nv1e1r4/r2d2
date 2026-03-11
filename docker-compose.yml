@@ -1,0 +1,57 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    container_name: graphrag
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/falkordb:/data
+    networks:
+      - r2_net
+
+  redis_cache:
+    image: redis:alpine
+    container_name: cache
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./data/redis_cache:/data
+    networks:
+      - r2_net
+
+  redis_insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis_insight
+    networks:
+      - r2_net
+    ports:
+      - "5540:5540"
+    volumes:
+      - ./redis/redisinsight/db:/db
+  
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: tracing
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - r2_net
+  
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+    restart: always
+
+volumes:
+  ollama_storage:
+
+networks:
+  r2_net:
+    driver: bridge
